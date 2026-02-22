@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>A Message for You 💌</title>
+
+<style>
+/* ===== PAGE BACKGROUND ===== */
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2a163f, #5a2d82);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: "Georgia", serif;
+  position: relative;
+  overflow: hidden; /* ✅ BODY LOCKED */
+}
+
+/* ===== BACK LINK ===== */
+.back-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #ffd6ea;
+  text-decoration: none;
+  font-size: 1rem;
+  opacity: 0.85;
+  z-index: 30;
+}
+.back-link:hover { opacity: 1; }
+
+/* ===== MESSAGE BOX ===== */
+.message-container {
+  max-width: 720px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 45px;
+  color: #fff0f8;
+  font-size: 1.3rem;
+  line-height: 1.9;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px rgba(255, 182, 220, 0.18);
+  z-index: 5;
+  transition: opacity 1.8s ease, transform 1.8s ease;
+  scroll-behavior: smooth;
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge */
+}
+
+.message-container::-webkit-scrollbar {
+  width: 6px;
+  display: none ;
+}
+.message-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 182, 220, 0.4);
+  border-radius: 10px;
+}
+
+
+@media (max-width: 600px) {
+  .message-container {
+    font-size: 1.1rem;
+    padding: 28px;
+  }
+}
+
+/* ===== CINEMATIC MEMORIES ===== */
+#memoriesSection {
+  position: fixed;
+  inset: 0;
+
+  background:
+    radial-gradient(circle at top, rgba(18, 8, 18, 0.55), rgba(45, 3, 54, 0.55));
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+  z-index: 10;
+}
+
+.cine-photo {
+  position: absolute;
+  opacity: 0;
+
+  border-radius: 20px;
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(255,255,255,0.08);
+
+  transition:
+    transform 2.8s cubic-bezier(.19,1,.22,1),
+    opacity 2.4s ease;
+
+  filter: saturate(1.1) contrast(1.05);
+  will-change: transform, opacity;
+}
+
+/* ===== FINAL TEXT ===== */
+#finalText { 
+  position: fixed; 
+  inset: 0; display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  font-size: clamp(2.8rem, 6vw, 4.5rem); 
+  color: #ff6fae; 
+  opacity: 0; 
+  transition: opacity 3s ease; 
+  z-index: 25; 
+  text-shadow: 0 0 20px rgba(246, 172, 208, 0.881), 0 0 40px rgba(241, 118, 181, 0.933); 
+}
+
+
+</style>
+</head>
+
+<body>
+
+<a href="index.html" class="back-link">← Back ❤️</a>
+
+<!-- 🎵 MESSAGE MUSIC -->
+<audio id="messageMusic" src="music/glue song.mp3" loop></audio>
+
+<!-- 🎬 MEMORIES MUSIC -->
+<audio id="memoriesMusic" src="music/sitaare.mp3" loop></audio>
+
+<div class="message-container">
+  <p id="message"></p>
+</div>
+
+<section id="memoriesSection"></section>
+<div id="finalText">Happy Birthday SweetHeart❤️</div>
+
+<script>
+const messageMusic = document.getElementById("messageMusic");
+const memoriesMusic = document.getElementById("memoriesMusic");
+const msgBox = document.querySelector(".message-container");
+const memSec = document.getElementById("memoriesSection");
+const finalText = document.getElementById("finalText");
+
+let messageTyped = false;
+
+/* message music fade-in */
+messageMusic.volume = 0;
+messageMusic.play();
+
+let v = 0;
+const msgFade = setInterval(() => {
+  if (v < 0.8) {
+    v += 0.04;
+    messageMusic.volume = v;
+  } else {
+    clearInterval(msgFade);
+  }
+}, 150);
+
+
+
+/* ===== WORD-BY-WORD MESSAGE ===== */
+const text = `
+Happy Birthday Ziii 💖
+
+sbse pehle toh Happy Birthday my sweety Princess🫂❤️
+Stay blessed, stay healthy, be happy, keep growing and 
+keep enjoying your life to the fullest.
+
+I won't say much but just you know that 
+since the day I got this much attached to you,
+you have become more than just an editor to me,
+you are part of my daily life, My day feels empty
+without you, although we just share very little
+time that too just through screen I like 
+every moment and you being the happiest is my 
+most favourite thing and you being sad is the last 
+thing I could see.Actually, can't see😖 
+It doesn't suit you Aap hmesha hste huye,khush
+you being in your cheerfull side waise hi acche lgte ho 
+mtlb acche toh hr treh se hi lgte ho but waise rha karo 
+hmesha, accha lgta hai😇.
+I never wanna see you getting hurt
+cause that doesn't hurt only you.  
+I don't easily say but when I say I'll be there 
+for you , with you then I'LL BE THERE! and I mean that. 
+Apna maan liya hai ab aapko , ab nhi jaane dungi.
+I just wish aap bhi mujhe thoda sa apna maan lo 
+enough that you could share your problems, your happy
+moments , your sad moments , if something hurts you 
+you could tell me without thinking much 🫂.
+I care for you and I hope you know that.
+That's all I would say.
+
+And know that ... 
+
+Babe! You are amazing the way you are 🫂❤️
+You have this beautiful way of making
+ordinary things, moments feel unforgettable.
+Your smile, your kindness, your presence —
+they mean more to me than words can explain.
+
+I hope today reminds you of how loved,
+valued, and truly special you are.
+Not just today… but every single day.
+
+I made this with Love ❤️
+I hope you like my small efforts
+and that brought a precious smile on your pretty face 
+
+Always keep smiling 🫶🏻🎂 
+Lots of Love and Hugs 🫂❤️
+
+or bss 2 line or aapke liye 
+
+तुम जो पूछो अपनी एहमियत मुझसे 
+तोह सुनो मोहतरमा।✨
+
+एक तुमको जो चुरा लु 
+तोह जमाना गरीब हो जाए ।। 💖
+
+`;
+
+const words = text.split(/(\s+)/);
+const messageEl = document.getElementById("message");
+messageEl.innerHTML = "";
+let wordIndex = 0;
+
+function typeWords() {
+  if(messageTyped) return;
+
+  if (wordIndex < words.length) {
+    messageEl.innerHTML += words[wordIndex].replace(/\n/g, "<br>");
+    wordIndex++;
+
+    // auto scroll ONLY while typing
+    msgBox.scrollTop = msgBox.scrollHeight;
+
+    setTimeout(typeWords, 130);
+  } else {
+    messageTyped = true;
+
+    // 🔓 manual scroll enabled
+    msgBox.style.pointerEvents = "auto";
+
+    // move to memories
+    setTimeout(startCinematicMemories, 4000);
+  }
+}
+
+typeWords();
+
+function startScrollLoop() {
+  const box = document.querySelector(".message-container");
+  let direction = 1; // 1 = down, -1 = up
+
+  setInterval(() => {
+    box.scrollTop += direction;
+
+    // bottom reached → go up
+    if (box.scrollTop + box.clientHeight >= box.scrollHeight - 2) {
+      direction = -1;
+    }
+
+    // top reached → go down
+    if (box.scrollTop <= 0) {
+      direction = 1;
+    }
+  }, 35); // slow + romantic 😌
+}
+
+/* ===== CINEMATIC PHOTO FLOW ===== */
+
+const photos = [
+  "images/image5.jpg",
+  "images/image4.jpg",
+  "images/image3.jpg",
+  "images/friends for life.jpg",
+  "images/image1.jpg",
+  "images/image7.jpg",
+  "images/image8.jpg",
+  "images/image9.jpg",
+  "images/image6.jpg",
+  "images/image10.jpg",
+  "images/image4.jpg",
+  "images/image3.jpg",
+];
+
+
+
+/* soft grid zones (screen fill guaranteed) */
+const zones = [
+  { x: 0,  y: 0 },
+  { x: 35, y: 6 },
+  { x: 65, y: 10 },
+
+  { x: 18,  y: 28 },
+  { x: 38, y: 36 },
+  { x: 68, y: 40 },
+
+  { x: 0, y: 48 },
+  { x: 22, y: -6 },
+  { x: 62, y: 8 },
+
+  { x: 42, y: 18 },
+  { x: 80, y: 0 },
+  { x: 80, y: 70 }
+
+];
+
+let index = 0;
+let z = 5;
+
+/* random entry direction */
+function getEntry() {
+  const from = Math.floor(Math.random() * 4);
+  switch (from) {
+    case 0: return { top: "110%", left: "50%", transform: "translateX(-50%) scale(0.9)" }; // bottom
+    case 1: return { top: "-40%", left: "50%", transform: "translateX(-50%) scale(0.9)" }; // top
+    case 2: return { top: "50%", left: "-40%", transform: "translateY(-50%) scale(0.9)" }; // left
+    case 3: return { top: "50%", left: "110%", transform: "translateY(-50%) scale(0.9)" }; // right
+  }
+}
+
+function placePhoto() {
+  if (index >= photos.length) {
+    setTimeout(() => finalText.style.opacity = 1, 2000);
+    return;
+  }
+
+  const img = document.createElement("img");
+  img.src = photos[index];
+  img.className = "cine-photo";
+
+  /* dynamic but controlled size */
+  img.style.width = Math.random() > 0.6 ? "30vw" : "24vw";
+  img.style.zIndex = z++;
+
+  const entry = getEntry();
+  img.style.top = entry.top;
+  img.style.left = entry.left;
+  img.style.transform = entry.transform;
+
+  memSec.appendChild(img);
+
+  const zone = zones[index % zones.length];
+
+  setTimeout(() => {
+    img.style.top = `calc(${zone.y}% + ${Math.random()*10 - 5}px)`;
+    img.style.left = `calc(${zone.x}% + ${Math.random()*10 - 5}px)`;
+    img.style.opacity = 1;
+    img.style.transform = `
+      rotate(${Math.random()*6 - 3}deg)
+      scale(1)
+    `;
+  }, 200);
+
+  index++;
+  setTimeout(placePhoto, 1500);
+}
+
+function startCinematicMemories() {
+  const msgBox = document.querySelector(".message-container");
+
+  /* fade message UI */
+  msgBox.style.opacity = "0";
+  msgBox.style.transform = "translateY(-20px)";
+  msgBox.style.pointerEvents = "none";
+
+  /* fade-out message music */
+  let mv = messageMusic.volume;
+  const fadeMsgOut = setInterval(() => {
+    if (mv > 0) {
+      mv -= 0.05;
+      messageMusic.volume = Math.max(mv, 0);
+    } else {
+      clearInterval(fadeMsgOut);
+      messageMusic.pause();
+    }
+  }, 120);
+
+  /* start cinematic after delay */
+  setTimeout(() => {
+    memSec.style.opacity = 1;
+    memSec.style.pointerEvents = "auto";
+
+    /* start memories music */
+    memoriesMusic.volume = 0;
+    memoriesMusic.play();
+
+    let cv = 0;
+    const memFade = setInterval(() => {
+      if (cv < 0.9) {
+        cv += 0.05;
+        memoriesMusic.volume = cv;
+      } else {
+        clearInterval(memFade);
+      }
+    }, 150);
+
+    placePhoto();
+  }, 1300);
+}
+
+</script>
+
+</body>
+</html>

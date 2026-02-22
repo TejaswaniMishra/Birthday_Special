@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>❤️ Happy Birthday ❤️</title>
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #430143;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+canvas { display: block; }
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.25));
+  pointer-events: none;
+}
+
+.message {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  bottom: 70px;
+  color: #ffffff;
+  opacity: 0;
+  animation: fadeIn 2s ease forwards;
+  animation-delay: 4s;
+}
+.message h1 { font-size: 42px; margin: 0; font-weight: 600; }
+.message p { font-size: 18px; margin-top: 10px; opacity: 0.85; }
+
+@keyframes fadeIn { to { opacity: 1; } }
+
+.main-title {
+  text-shadow:
+    0 0 8px rgba(255,182,193,0.6),
+    0 0 20px rgba(255,105,180,0.4);
+}
+
+#tapText {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+  color: rgba(255,255,255,0.8);
+  font-size: 14px;
+  letter-spacing: 1px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.floating-text {
+  color: rgba(255, 240, 250, 0.85);
+}
+
+#musicHint {
+  position: absolute;
+  top: 8%;
+  width: 100%;
+  text-align: center;
+  font-size: 15px;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 0.6px;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  pointer-events: none;
+  text-shadow: 0 0 8px rgba(255,200,220,0.4);
+}
+
+#songName {
+  position: absolute;
+  top: 50px;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: 18px;
+  pointer-events: none;
+}
+
+/* SMALL HEART */
+.mini-heart {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #d5035e;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  border-radius: 50% 50% 0 0;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  animation: miniPulse 1.2s infinite;
+  box-shadow: 0 0 12px rgba(216, 0, 108, 0.9);
+  z-index: 20;
+}
+
+.mini-heart::before,
+.mini-heart::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background:#d5035e;
+  border-radius: 50%;
+}
+
+.mini-heart::before {
+  top: -11px;
+  left: 0;
+}
+
+.mini-heart::after {
+  left: 11px;
+  top: 0;
+}
+
+/* HINT TEXT */
+.hint {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  color: #ffd6ea;
+  opacity: 0;
+  transition: opacity 0.6s;
+  pointer-events: none;
+}
+
+@keyframes miniPulse {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-45deg) scale(1); }
+  50% { transform: translate(-50%, -50%) rotate(-45deg) scale(1.3); }
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div id="tapText">Princess 🥰 click anywhere 🎶</div>
+<div id="musicHint"></div>
+
+<div id="songName"></div>
+
+<div class="mini-heart" id="miniHeart"></div>
+<span class="hint" id="hintText">Tap 💌 <br>when done with music 🥰 </span>
+
+<div class="message">
+  <h1>Happyyyy Birthdayyyy Princess🥳❤️</h1>
+  <p>You are not just special today - you are special everyday 🫂❤️ </p>
+</div>
+
+<audio id="music"></audio>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+// ================= MATRIX EMOJIS =================
+const cols = Math.floor(canvas.width / 18);
+const drops = [];
+const speeds = [];
+for (let i = 0; i < cols; i++) {
+  drops[i] = 0;
+  speeds[i] = Math.random() * 0.2 + 0.05;
+}
+
+// ================= HORIZONTAL WISHES =================
+const wishList = [
+  "Happy Birthday Princess 🥳❤️",
+  " yeahhhhh 🥳🎉",
+  "finally !!!",
+  "cheers to you being 21🥂",
+  "keep growing",
+  "keep on smiling",
+  "its your bdayyy🥳 ",
+  "princeeesss",
+  "You are amazing 🫶🏻",
+  "Stay awesome 🎂",
+  "Wishing you joy 🎉",
+  "Love and hugs 🫂❤️",
+  "Shine bright 🌟",
+  "be blessed always 🫶🏻",
+  "happyyyy bdayyyyy 🥳🎉",
+  "i am so happyyy hehe 😁"
+
+];
+const horizontalWishes = [];
+function addHorizontalWish() {
+  const wish = wishList[Math.floor(Math.random() * wishList.length)];
+  const x = Math.random() * (canvas.width - wish.length * 16);
+  const speed = Math.random() * 0.3 + 0.1;
+  horizontalWishes.push({wish, x, y: -20, speed});
+}
+function drawHorizontalWishes() {
+  ctx.font = "20px Consolas";
+  horizontalWishes.forEach((drop,index) => {
+    ctx.fillStyle = "rgba(255,220,230,0.9)";
+    ctx.fillText(drop.wish, drop.x, drop.y);
+    drop.y += drop.speed * 2;
+    if(drop.y > canvas.height+20) horizontalWishes.splice(index,1);
+  });
+  if(Math.random() < 0.02) addHorizontalWish();
+}
+
+// ================= CONFETTI =================
+const confetti = [];
+function addConfetti() {
+  const x = Math.random() * canvas.width;
+  const y = -10;
+  const size = Math.random() * 6 + 4;
+  const speed = Math.random() * 1 + 0.5;
+  const color = `hsl(${Math.random()*360},80%,60%)`;
+  confetti.push({x,y,size,speed,color});
+}
+function drawConfetti() {
+  confetti.forEach((c,index)=>{
+    ctx.fillStyle = c.color;
+    ctx.fillRect(c.x, c.y, c.size, c.size);
+    c.y += c.speed;
+    if(c.y > canvas.height) confetti.splice(index,1);
+  });
+  if(Math.random()<0.05) addConfetti();
+}
+
+// ================= VERTICAL MATRIX =================
+function drawMatrix() {
+  ctx.font = "16px Consolas";
+  for(let i=0;i<drops.length;i++){
+    const text = Math.random()>0.5 ? "🫶🏻":"💐🌹";
+    ctx.fillStyle = "rgba(200,200,200,0.35)";
+    ctx.fillText(text,i*18,drops[i]*18);
+    if(drops[i]*18>canvas.height && Math.random()>0.975) drops[i]=0;
+    drops[i]+=speeds[i];
+  }
+}
+
+// ================= HEART =================
+let sparkles=[];
+function addSparkle(x,y){ sparkles.push({x,y,life:40,size:Math.random()*2+1}); }
+function drawSparkles(){
+  sparkles=sparkles.filter(s=>s.life>0);
+  sparkles.forEach(s=>{
+    ctx.fillStyle=`rgba(255,180,200,${s.life/40})`;
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fill();
+    s.life--;
+  });
+}
+let t=0;
+function heart(t,angle=0){
+  return {
+    x:16*Math.pow(Math.sin(t),3)*Math.cos(angle),
+    y:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))
+  };
+}
+function drawHeart(){
+  const cx=canvas.width/2;
+  const cy=canvas.height/2-40;
+  const beat=1+Math.sin(t)*0.04;
+  const scale=12*beat;
+  const angle=Math.sin(t*0.5)*0.3; // subtle 3D rotation
+
+  ctx.save();
+  ctx.translate(cx,cy);
+  ctx.scale(scale,scale);
+
+  const grad=ctx.createRadialGradient(0,-2,2,0,0,18);
+  grad.addColorStop(0,"#ffb3c7");
+  grad.addColorStop(1,"#c9184a");
+
+  ctx.beginPath();
+  for(let i=0;i<Math.PI*2;i+=0.02){
+    const p=heart(i,angle);
+    ctx.lineTo(p.x,p.y);
+    if(Math.random()<0.015) addSparkle(cx+p.x*scale,cy+p.y*scale);
+  }
+  ctx.closePath();
+  ctx.fillStyle=grad;
+  ctx.shadowColor="#ff4d6d";
+  ctx.shadowBlur=25;
+  ctx.fill();
+
+  ctx.lineWidth=0.6;
+  ctx.strokeStyle="rgba(255,220,230,0.8)";
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ================= FIREWORKS =================
+const fireworks = [];
+function addFirework() {
+  const x = Math.random() * canvas.width;
+  const y = canvas.height;
+  const targetY = Math.random() * canvas.height/2;
+  const color = `hsl(${Math.random()*360}, 80%, 60%)`;
+  fireworks.push({x, y, targetY, particles: [], exploded:false, color});
+}
+function drawFireworks() {
+  fireworks.forEach((fw,index)=>{
+    if(!fw.exploded){
+      fw.y -= 5;
+      ctx.fillStyle=fw.color;
+      ctx.beginPath();
+      ctx.arc(fw.x, fw.y, 3,0,Math.PI*2);
+      ctx.fill();
+      if(fw.y <= fw.targetY){
+        fw.exploded = true;
+        for(let i=0;i<30;i++){
+          const angle = Math.random()*Math.PI*2;
+          const speed = Math.random()*4 + 1;
+          fw.particles.push({
+            x:fw.x, y:fw.y,
+            vx:Math.cos(angle)*speed,
+            vy:Math.sin(angle)*speed,
+            life: 40,
+            color:`hsl(${Math.random()*360},80%,60%)`
+          });
+        }
+      }
+    } else {
+      fw.particles.forEach((p,pi)=>{
+        ctx.fillStyle=p.color;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fill();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.05;
+        p.life--;
+        if(p.life<=0) fw.particles.splice(pi,1);
+      });
+      if(fw.particles.length===0) fireworks.splice(index,1);
+    }
+  });
+  if(Math.random()<0.01) addFirework();
+}
+
+// ================= MUSIC PLAYLIST =================
+const music = document.getElementById("music");
+const playlist = [
+  "music/ringtone.mp3",
+  "music/21.mp3",
+  "music/🫂.mp3",
+  "music/Laila Laila.mp3",
+  "music/you.mp3",
+  "music/Preet re.mp3",
+  "music/sitaare.mp3",
+  "music/darkhast2.mp3"
+];
+let songIndex = 0;
+let started = false;
+
+const songNameDiv = document.getElementById("songName");
+const tapText = document.getElementById("tapText");
+const musicHint = document.getElementById("musicHint");
+
+function showSongName(name){
+  songNameDiv.textContent = `Now playing: ${name}`;
+  setTimeout(() => songNameDiv.textContent = "", 2500);
+}
+
+function playSong(index){
+  music.src = playlist[index];
+  music.currentTime = 0;
+  music.play();
+  showSongName(playlist[index]);
+
+  // 🔴 Hide hint on last song
+  if(index === playlist.length - 1){
+    hideHint();
+  }
+}
+
+music.addEventListener("ended", () => {
+  songIndex = (songIndex + 1) % playlist.length;
+  playSong(songIndex);
+});
+
+
+/* ================= MUSIC HINT ================= */
+function showHint(text) {
+  musicHint.textContent = text;
+  musicHint.style.opacity = 1;
+}
+
+function hideHint() {
+  musicHint.style.opacity = 0;
+}
+
+/* ===== fadeOut =====*/
+function fadeOutAndGo() {
+  let vol = music.volume;
+
+  const fade = setInterval(() => {
+    vol -= 0.02;               // smooth fade
+    if (vol <= 0) {
+      clearInterval(fade);
+      music.pause();
+      music.volume = 1;        // reset for future
+      window.location.href = "message.html";
+    } else {
+      music.volume = vol;
+    }
+  }, 50);
+}
+
+// ================= CLICK HANDLING =================
+document.body.addEventListener("click",(e)=>{
+
+  // ▶️ FIRST CLICK ONLY (start experience)
+  if(!started){
+    started = true;
+    tapText.style.display = "none";
+
+    playSong(songIndex);
+
+    // ⏱️ Hint timings
+    setTimeout(() => {
+      showHint("Stay a little… there’s more 🎶");
+    }, 6000);
+
+    setTimeout(() => {
+      showHint("Every tap changes the mood 🎶💖 , try tapping 😋");
+    }, 18000);
+  }
+
+  // 💗 HEART / LEFT / RIGHT LOGIC
+  const centerX = window.innerWidth / 2;
+  const centerY = window.innerHeight / 2 - 40;
+  const heartRadius = 100;
+  const dx = e.clientX - centerX;
+  const dy = e.clientY - centerY;
+
+  if(Math.sqrt(dx*dx + dy*dy) < heartRadius){
+    // center → play/pause
+    music.paused ? music.play() : music.pause();
+  }
+  else if(e.clientX < window.innerWidth / 2){
+    // left → previous
+    songIndex = (songIndex - 1 + playlist.length) % playlist.length;
+    playSong(songIndex);
+  }
+  else{
+    // right → next
+    songIndex = (songIndex + 1) % playlist.length;
+    playSong(songIndex);
+  }
+
+  // ✨ Click sparkles
+  for(let i=0;i<20;i++){
+    addSparkle(
+      e.clientX + Math.random()*40 - 20,
+      e.clientY + Math.random()*40 - 20
+    );
+  }
+});
+
+// ================= ANIMATION LOOP =================
+function animate(){
+  ctx.fillStyle="rgba(63, 0, 82, 0.8)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  drawMatrix();
+  drawHorizontalWishes();
+  drawConfetti();
+  drawFireworks();
+  drawHeart();
+  drawSparkles();
+  t+=0.04;
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ================= Mini heart ===================
+
+const miniHeart = document.getElementById("miniHeart");
+const hintText = document.getElementById("hintText");
+
+// show mini heart after 2 minutes
+setTimeout(() => {
+  miniHeart.style.opacity = 1;
+  miniHeart.style.pointerEvents = "auto";
+  hintText.style.opacity = 1;
+}, 120000); // 2 min
+
+miniHeart.addEventListener("click", (e) => {
+  e.stopPropagation();   // VERY IMPORTANT
+  fadeOutAndGo();
+});
+
+</script>
+
+</body>
+</html>
