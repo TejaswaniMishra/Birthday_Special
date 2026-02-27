@@ -91,7 +91,6 @@ body::after {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-45deg);
-  border-radius: 50% 50% 0 0;
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
@@ -100,13 +99,15 @@ body::after {
   z-index: 20;
 }
 
+/* REMOVE border-radius from main */
+
 .mini-heart::before,
 .mini-heart::after {
   content: "";
   position: absolute;
   width: 22px;
   height: 22px;
-  background:#d5035e;
+  background: #d5035e;
   border-radius: 50%;
 }
 
@@ -355,11 +356,11 @@ const music = document.getElementById("music");
 const playlist = [
   "music/ringtone.mp3",
   "music/21.mp3",
-  "music/🫂.mp3",
   "music/sitaare.mp3",
   "music/you.mp3",
   "music/Preet re.mp3",
-  "music/darkhast2.mp3"
+  "music/darkhast2.mp3",
+  "music/wareya_lofi_reverb.mp3",
 ];
 let songIndex = 0;
 let started = false;
@@ -505,4 +506,5 @@ miniHeart.addEventListener("click", (e) => {
 
 </body>
 </html>
+
 
