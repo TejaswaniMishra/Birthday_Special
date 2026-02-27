@@ -147,22 +147,45 @@ const memSec = document.getElementById("memoriesSection");
 const finalText = document.getElementById("finalText");
 
 let messageTyped = false;
+let musicStarted = false;
 
-/* message music fade-in */
-messageMusic.volume = 0;
-messageMusic.play();
+function startMessageMusic() {
+  if (musicStarted) return;
+  musicStarted = true;
 
-let v = 0;
-const msgFade = setInterval(() => {
-  if (v < 0.8) {
-    v += 0.04;
-    messageMusic.volume = v;
-  } else {
-    clearInterval(msgFade);
-  }
-}, 150);
+  messageMusic.volume = 0;
+  
+  messageMusic.play()
+    .then(() => {
+      fadeInMessageMusic();
+    })
+    .catch(() => {
+      // Autoplay blocked → wait for user interaction
+      document.addEventListener("click", handleUserStart, { once: true });
+      document.addEventListener("touchstart", handleUserStart, { once: true });
+    });
+}
 
+function handleUserStart() {
+  messageMusic.play().then(() => {
+    fadeInMessageMusic();
+  });
+}
 
+function fadeInMessageMusic() {
+  let v = 0;
+  const fade = setInterval(() => {
+    if (v < 0.8) {
+      v += 0.04;
+      messageMusic.volume = v;
+    } else {
+      clearInterval(fade);
+    }
+  }, 150);
+}
+
+/* Try auto start on load */
+window.addEventListener("load", startMessageMusic);
 
 /* ===== WORD-BY-WORD MESSAGE ===== */
 const text = `
@@ -416,6 +439,7 @@ function startCinematicMemories() {
 
 </body>
 </html>
+
 
 
 
